@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class AppoitmentFactory extends Factory
+class AppointmentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -22,7 +22,7 @@ class AppoitmentFactory extends Factory
             'patient_id' => Patient::factory(),
             'doctor_id' => Doctor::factory(),
             'appointment_date' => fake()->dateTime(),
-            'status' => fake()->randomElement(['pending, confirmed, cancelled'])
+            'status' => fake()->randomElement(['pending', 'confirmed', 'cancelled'])
         ];
     }
 }

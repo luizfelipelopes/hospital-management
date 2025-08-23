@@ -18,7 +18,7 @@ class DoctorFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::factory()->doctor(),
             'speciality' => collect(['psicologist', 'pediatrist', 'cardiologist'])->random()
         ];
     }
