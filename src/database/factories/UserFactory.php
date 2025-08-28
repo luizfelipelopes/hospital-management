@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Enum;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -33,6 +33,67 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'type'  => collect(['admin', 'doctor', 'receptionist'])->random(),
         ];
+    }
+
+    /**
+     * Configure the model factory.
+     *
+     * @return $this
+     */
+    public function configure()
+    {
+        return $this->afterCreating(function (User $user) {
+            
+            $role = Role::where('name', $user->type)
+                       ->where('guard_name', 'sanctum')
+                       ->first();
+            
+            if ($role) {
+                $user->assignRole($role);
+                $permissions = [];
+
+                switch ($user->type) {
+                    case 'admin':
+                        $permissions = [
+                        'view appointments',
+                            'create appointments',
+                            'update appointments',
+                            'cancel appointments',
+                            'view patients',
+                            'create patients',
+                            'update patients',
+                            'delete patients',
+                            'view doctors',
+                            'create doctors',
+                            'update doctors',
+                            'delete doctors'
+                        ];
+                    break;
+                    case 'receptionist':
+                        $permissions = [
+                            'create patients',
+                            'update patients',
+                            'delete patients',
+                            'view appointments',
+                            'create appointments',
+                            'update appointments',
+                            'cancel appointments',
+                        ];
+                    break;    
+                    case 'doctor':
+                        $permissions = [
+                            'view appointments',
+                        ];
+                    break;    
+                
+                    default:
+                    break;
+                }
+
+                $role->givePermissionTo($permissions);
+
+        }
+        });
     }
 
     /**

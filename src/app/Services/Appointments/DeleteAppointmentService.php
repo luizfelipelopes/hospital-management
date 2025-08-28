@@ -3,13 +3,14 @@
 namespace App\Services\Appointments;
 
 use App\Models\Appointment;
-use App\Models\Patient;
 
 class DeleteAppointmentService {
 
-    public function execute(Appointment $appointment): bool
+    public function execute(Appointment $appointment): Appointment
     {  
-        return $appointment->delete();
+        $appointment->update(['status' => 'cancelled']);
+
+        return $appointment;
     }
 }
 

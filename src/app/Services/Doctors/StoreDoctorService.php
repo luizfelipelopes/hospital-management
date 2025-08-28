@@ -21,12 +21,19 @@ class StoreDoctorService {
 
     private function createUser(StoreDoctorDTO $data): User
     {
-        return User::create([
+
+        $user = User::create([
             'name' => $data->name,
             'email' => $data->email,
             'password' => $data->password,
             'type' => 'doctor'
         ]);
+
+        $user->assignRole($user->type);
+
+        return $user;
+
+        
     }
 
 }

@@ -13,10 +13,26 @@ use App\Services\Appointments\ShowAppointmentService;
 use App\Services\Appointments\StoreAppointmentService;
 use App\Services\Appointments\UpdateAppointmentService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class AppointmentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view appointments')
+        ->only(['index', 'show']);
+        
+        $this->middleware('permission:create appointments')
+        ->only(['store']);
+        
+        $this->middleware('permission:update appointments')
+        ->only(['update']);
+        
+        $this->middleware('permission:cancel appointments')
+        ->only(['destroy']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -71,9 +87,8 @@ class AppointmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Appointment $appointment, DeleteAppointmentService $service): Response
+    public function destroy(Appointment $appointment, DeleteAppointmentService $service): JsonResponse
     {
-        $service->execute($appointment);
-        return response()->noContent();
+        return response()->json($service->execute($appointment));
     }
 }
