@@ -55,7 +55,7 @@ class UserFactory extends Factory
                 switch ($user->type) {
                     case 'admin':
                         $permissions = [
-                        'view appointments',
+                            'view appointments',
                             'create appointments',
                             'update appointments',
                             'cancel appointments',
@@ -71,6 +71,7 @@ class UserFactory extends Factory
                     break;
                     case 'receptionist':
                         $permissions = [
+                            'view patients',
                             'create patients',
                             'update patients',
                             'delete patients',
@@ -82,7 +83,7 @@ class UserFactory extends Factory
                     break;    
                     case 'doctor':
                         $permissions = [
-                            'view appointments',
+                            'view self appointments',
                         ];
                     break;    
                 

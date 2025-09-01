@@ -15,6 +15,18 @@ use App\Services\Doctors\DeleteDoctorService;
 
 class DoctorsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view doctors')
+        ->only(['index', 'show']);
+        $this->middleware('permission:create doctors')
+        ->only(['store']);
+        $this->middleware('permission:update doctors')
+        ->only(['update']);
+        $this->middleware('permission:delete doctors')
+        ->only(['destroy']);
+    }
+
     public function index(ListDoctorsService $listDoctorsService)
     {
         return response()->json($listDoctorsService->execute());

@@ -15,6 +15,18 @@ use App\Services\Patients\UpdatePatientService;
 
 class PatientsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('permission:view patients')
+        ->only(['index', 'show']);
+        $this->middleware('permission:create patients')
+        ->only(['store']);
+        $this->middleware('permission:update patients')
+        ->only(['update']);
+        $this->middleware('permission:delete patients')
+        ->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      */

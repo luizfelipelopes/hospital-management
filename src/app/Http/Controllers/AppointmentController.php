@@ -13,14 +13,12 @@ use App\Services\Appointments\ShowAppointmentService;
 use App\Services\Appointments\StoreAppointmentService;
 use App\Services\Appointments\UpdateAppointmentService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
 
 class AppointmentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view appointments')
+        $this->middleware('permission:view appointments|view self appointments')
         ->only(['index', 'show']);
         
         $this->middleware('permission:create appointments')
@@ -38,7 +36,9 @@ class AppointmentController extends Controller
      */
     public function index(ListAppointmentsService $service): JsonResponse
     {
-        return response()->json($service->execute());
+        $user = auth()->user();
+
+        return response()->json($service->execute($user));
     }
 
     /**
