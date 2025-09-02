@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\DTOs\StorePatientDTO;
 use App\DTOs\UpdatePatientDTO;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePatientRequest;
 use App\Http\Requests\UpdatePatientRequest;
 use App\Models\Patient;
@@ -27,18 +28,12 @@ class PatientsController extends Controller
         $this->middleware('permission:delete patients')
         ->only(['destroy']);
     }
-    
     /**
      * Display a listing of the resource.
      */
     public function index(ListPatientsService $listPatientsService)
     {
-        return view('patients.index', ['patients' =>  $listPatientsService->execute()]);
-    }
-
-    public function create()
-    {
-        return view('patients.create');
+        return response()->json($listPatientsService->execute());
     }
 
     /**
@@ -59,12 +54,8 @@ class PatientsController extends Controller
             country: $validated["country"],
         );
 
-        $storePatientService->execute($data);
-
-        return redirect()
-        ->route('patients.index')
-        ->with('success', 'Patient created with success!');
-
+        $patient = $storePatientService->execute($data);
+        return response()->json($patient);
     }
 
     /**
@@ -72,8 +63,7 @@ class PatientsController extends Controller
      */
     public function show(Patient $patient, ShowPatientService $showPatientService)
     {
-        return view('patients.patient', 
-        ['patient' => $showPatientService->execute($patient)]);
+        return response()->json($showPatientService->execute($patient));
     }
 
     /**
@@ -94,11 +84,7 @@ class PatientsController extends Controller
             country: $validated["country"],
         );
 
-        $patientService->execute($data, $patient);
-
-        return redirect()->route('patients.index')
-        ->with('success','Patient updated with success!');
-
+        return response()->json($patientService->execute($data, $patient));
     }
 
     /**
@@ -108,7 +94,6 @@ class PatientsController extends Controller
     {
         $deletePatientService->execute($patient);
 
-        return redirect()->route('patients.index')
-        ->with('success', 'Patient deleted with success!');
+        return response()->noContent();
     }
 }

@@ -12,8 +12,14 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        // Api roles
         Role::create(['name' => 'admin', 'guard_name' => 'sanctum']);
         Role::create(['name' => 'receptionist', 'guard_name' => 'sanctum']);
         Role::create(['name' => 'doctor', 'guard_name' => 'sanctum']);
+        
+        // Web roles
+        Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        Role::create(['name' => 'receptionist', 'guard_name' => 'web']);
+        Role::create(['name' => 'doctor', 'guard_name' => 'web']);
     }
 }

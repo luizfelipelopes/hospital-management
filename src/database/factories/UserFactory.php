@@ -44,12 +44,19 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             
-            $role = Role::where('name', $user->type)
+            $roleApi = Role::where('name', $user->type)
                        ->where('guard_name', 'sanctum')
                        ->first();
             
-            if ($role) {
-                $user->assignRole($role);
+            $roleWeb = Role::where('name', $user->type)
+                       ->where('guard_name', 'web')
+                       ->first();
+            
+            if ($roleApi && $roleWeb) {
+
+                $user->assignRole($roleApi);
+                $user->assignRole($roleWeb);
+                
                 $permissions = [];
 
                 switch ($user->type) {
@@ -91,9 +98,10 @@ class UserFactory extends Factory
                     break;
                 }
 
-                $role->givePermissionTo($permissions);
+                $roleApi->givePermissionTo($permissions);
+                $roleWeb->givePermissionTo($permissions);
 
-        }
+            }
         });
     }
 
