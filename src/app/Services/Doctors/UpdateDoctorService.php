@@ -24,8 +24,7 @@ class UpdateDoctorService {
     {
         return $user->update([
             'name' => $data->name,
-            'email' => $data->email,
-            'password' => $data->password,
+            'email' => $data->email
         ]);
     }
 

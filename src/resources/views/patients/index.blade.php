@@ -1,6 +1,6 @@
 <h1>List of patients!</h1>
 
-<a href="{{ route('patients.create') }}">Create</a><br /><br />
+<a href="/">Home</a> | <a href="{{ route('patients.create') }}">Create</a><br /><br />
 
 
 @foreach ($patients as $patient)

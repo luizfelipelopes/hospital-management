@@ -25,7 +25,7 @@ class UpdateDoctorRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => ['required', 'email', Rule::unique('users')->ignore($this->doctor->user_id)],
-            'password'=> 'required|string',
+            'password'=> 'sometimes|required|string',
             'speciality'=> 'required|string'
         ];
     }

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\DTOs\StoreDoctorDTO;
 use App\DTOs\UpdateDoctorDTO;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
 use App\Models\Doctor;
@@ -29,12 +30,7 @@ class DoctorsController extends Controller
 
     public function index(ListDoctorsService $listDoctorsService)
     {
-        return view('doctors.index', ['doctors' => $listDoctorsService->execute()]);
-    }
-
-    public function create()
-    {
-        return view('doctors.create');
+        return response()->json($listDoctorsService->execute());
     }
 
     public function store(StoreDoctorRequest $request, StoreDoctorService $service)
@@ -48,15 +44,14 @@ class DoctorsController extends Controller
             speciality: $validated['speciality'],
         );
 
-        $service->execute($data);
+        $doctor = $service->execute($data);
 
-        return redirect()->route('doctors.index')
-        ->with('success','Doctor created with sucdess!');
+        return response()->json($doctor);
     }
 
     public function show(Doctor $doctor, ShowDoctorsService $showDoctorsService)
     {
-        return view('doctors.doctor', ['doctor' => $showDoctorsService->execute($doctor)]);
+        return response()->json($showDoctorsService->execute($doctor));
     }
 
     public function update(UpdateDoctorRequest $request, Doctor $doctor, UpdateDoctorService $updateDoctorService)
@@ -66,21 +61,18 @@ class DoctorsController extends Controller
         $data = new UpdateDoctorDTO(
             name: $validated['name'],
             email: $validated['email'],
-            password: $validated['password'] ?? null,
+            password: $validated['password'],
             speciality: $validated['speciality'],
         );
 
-        $updateDoctorService->execute($data, $doctor);
+        $doctor = $updateDoctorService->execute($data, $doctor);
 
-        return redirect()->route('doctors.index')
-        ->with('success','Doctor updated with success!');
+        return response()->json($doctor);
     }
     
     public function destroy(Doctor $doctor, DeleteDoctorService $deleteDoctorService)
     {
         $deleteDoctorService->execute($doctor);
-
-        return redirect()->route('doctors.index')
-        ->with('success','Doctor deleted with success!');
+        return response()->noContent();
     }
 }
