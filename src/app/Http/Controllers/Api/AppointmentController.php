@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\DTOs\StoreAppointmentDTO;
 use App\DTOs\UpdateAppointmentDTO;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;
-use App\Models\Doctor;
-use App\Models\Patient;
 use App\Services\Appointments\DeleteAppointmentService;
 use App\Services\Appointments\ListAppointmentsService;
 use App\Services\Appointments\ShowAppointmentService;
 use App\Services\Appointments\StoreAppointmentService;
 use App\Services\Appointments\UpdateAppointmentService;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 
 class AppointmentController extends Controller
 {
@@ -37,26 +35,17 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ListAppointmentsService $service): View
+    public function index(ListAppointmentsService $service): JsonResponse
     {
         $user = auth()->user();
 
-        return view('appointments.index', 
-        ['appointments' => $service->execute($user)]);
-    }
-
-    public function create(): View
-    {
-        return view('appointments.create', [
-            'doctors' => Doctor::all(),
-            'patients' => Patient::all()
-        ]);
+        return response()->json($service->execute($user));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAppointmentRequest $request, StoreAppointmentService $service): RedirectResponse
+    public function store(StoreAppointmentRequest $request, StoreAppointmentService $service): JsonResponse
     {
         $validated = $request->validated();
 
@@ -67,28 +56,22 @@ class AppointmentController extends Controller
            status: $validated['status'],
         );
 
-        $service->execute($data);
-        
-        return redirect()->route('appointments.index')
-        ->with('success','Appointment created with success!');
+        return response()->json($service->execute($data));
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Appointment $appointment, ShowAppointmentService $service): View
+    public function show(Appointment $appointment, ShowAppointmentService $service): JsonResponse
     {
-        return view('appointments.appointment', 
-        ['appointment' => $service->execute($appointment),
-                'doctors' => Doctor::all(),
-                'patients' => Patient::all()        
-                ]);
+        return response()->json($service->execute($appointment));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAppointmentRequest $request, Appointment $appointment, UpdateAppointmentService $service): RedirectResponse
+    public function update(UpdateAppointmentRequest $request, Appointment $appointment, UpdateAppointmentService $service): JsonResponse
     {
         $validated = $request->validated();
 
@@ -99,20 +82,14 @@ class AppointmentController extends Controller
            status: $validated['status'],
         );
 
-        $service->execute($data, $appointment);
-
-        return redirect()->route('appointments.index')
-        ->with('success','Appointment Updated with success!');
+        return response()->json($service->execute($data, $appointment));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Appointment $appointment, DeleteAppointmentService $service): RedirectResponse
+    public function destroy(Appointment $appointment, DeleteAppointmentService $service): JsonResponse
     {
-        $service->execute($appointment);
-
-        return redirect()->route('appointments.index')
-        ->with('success','Appointment cancelled with success!');
+        return response()->json($service->execute($appointment));
     }
 }

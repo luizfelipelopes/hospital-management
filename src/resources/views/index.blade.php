@@ -9,4 +9,5 @@
 <ul>
     <li><a href="{{ route('patients.index')}}"> Patients </li>
     <li><a href="{{ route('doctors.index')}}"> Doctors </li>
+    <li><a href="{{ route('appointments.index')}}"> Appointments </li>
 </ul>
