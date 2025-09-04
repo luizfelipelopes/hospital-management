@@ -7,7 +7,9 @@
 </form>
 
 <ul>
-    <li><a href="{{ route('patients.index')}}"> Patients </li>
-    <li><a href="{{ route('doctors.index')}}"> Doctors </li>
-    <li><a href="{{ route('appointments.index')}}"> Appointments </li>
+    @can('view patients') <li><a href="{{ route('patients.index')}}"> Patients </li> @endcan
+    @can('view doctors')<li><a href="{{ route('doctors.index')}}"> Doctors </li>@endcan
+    @if (auth()->user()->can('view appointments')  || auth()->user()->can('view self appointments'))
+        <li><a href="{{ route('appointments.index')}}"> Appointments </li>
+    @endif    
 </ul>
