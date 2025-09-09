@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Hash;
 class UpdateDoctorDTO {
     public string $name;
     public string $email;
-    public ?string $password = null;
     public string $speciality;
+    public ?string $password = null;
 
     public function __construct(
         string $name,
         string $email,
-        ?string $password = null,
         string $speciality,
+        ?string $password = null,
     ) {
         $this->name = $name;
         $this->email = $email;
