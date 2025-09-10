@@ -4,12 +4,20 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Services\Appointments\ShowAppointmentService;
+use Database\Seeders\PermissionSeed;
+use Database\Seeders\RoleSeeder;
 
 describe('Show Appointment Service', function() {
 
     it('should shows a appointment', function() {
 
         // Arrange
+
+        $roles = new RoleSeeder();
+        $roles->run();
+        $permissions = new PermissionSeed();
+        $permissions->run();
+
         $doctor = Doctor::factory()->create();
         $patient = Patient::factory()->create();
         $today = now();
@@ -40,7 +48,7 @@ describe('Show Appointment Service', function() {
 
         // Act
         $service = new ShowAppointmentService();
-        $dataAppointment = $service->execute($appointment);
+        $dataAppointment = $service->execute($appointment, $doctor->user);
 
         // Assert
         expect($dataExpectedAppointment)->toEqualCanonicalizing($dataAppointment->toArray());

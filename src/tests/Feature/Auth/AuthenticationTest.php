@@ -2,13 +2,15 @@
 
 use App\Models\User;
 
+use function Pest\Laravel\post;
+
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
-    $response = $this->post('/login', [
+    $response = post(route('login', [
         'email' => $user->email,
         'password' => 'password',
-    ]);
+    ]));
 
     $this->assertAuthenticated();
     $response->assertRedirect();
