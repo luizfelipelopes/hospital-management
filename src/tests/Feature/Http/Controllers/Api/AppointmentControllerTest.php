@@ -31,7 +31,7 @@ describe('Appointment Controller API', function () {
             Appointment::factory(12)->create();
 
             // Act
-            $response = actingAs($user)->get('/api/v1/appointments');
+            $response = actingAs($user)->get(route('api.v1appointments.index'));
 
             // Assert
             $response->assertStatus(200);
@@ -67,7 +67,7 @@ describe('Appointment Controller API', function () {
             ]);
 
             // Act
-            $response = actingAs($user)->get('/api/v1/appointments');
+            $response = actingAs($user)->get(route('api.v1appointments.index'));
 
             // Assert
             $response->assertSuccessful();
@@ -101,7 +101,7 @@ describe('Appointment Controller API', function () {
             ]);
 
             // Act
-            $response = actingAs($user)->get('/api/v1/appointments');
+            $response = actingAs($user)->get(route('api.v1appointments.index'));
 
             // Assert
             $response->assertSuccessful();
@@ -116,7 +116,7 @@ describe('Appointment Controller API', function () {
             Appointment::factory(12)->create();
 
             // Act
-            $response = get('/api/v1/appointments');
+            $response = get(route('api.v1appointments.index'));
 
             // Assert
             try {
@@ -148,11 +148,174 @@ describe('Appointment Controller API', function () {
     });
     
     describe('Show Appointment', function () {
-        test('admin can show a appointment', function () {})->todo();
-        test('a doctor can view only their own appointment', function () {})->todo();
-        test('a receptionist can view a appointment', function () {})->todo();
-        it('should not show appointment to a unauthenticated user', function () {})->todo();
-        it('should not show appointment to a user without permissions', function () {})->todo();
+        test('admin can show a appointment', function () {
+
+            // Arrange
+            $roles = new RoleSeeder();
+            $roles->run();
+            $permissions = new PermissionSeed();
+            $permissions->run();
+
+            $user = User::factory()->create(['type' => 'admin']);
+            $doctor = Doctor::factory()->create();
+            $patient = Patient::factory()->create();
+
+            $appointmentDate = now()->startOfSecond();
+            $dataAppointment = [
+                'doctor_id' => $doctor->id,
+                'patient_id' => $patient->id,
+                'appointment_date' => $appointmentDate,
+                'status' => 'pending'
+            ];
+
+            $appointment = Appointment::factory()->create($dataAppointment);
+
+            // Act
+            $response = actingAs($user)
+            ->get(route('api.v1appointments.show', ['appointment' => $appointment->id]));
+
+            // Assert
+            $response->assertOk();
+            $response->assertStatus(200);
+            $response->assertJsonFragment($dataAppointment);
+            $response->assertJsonStructure (['doctor_id', 'patient_id', 'appointment_date', 'status']);
+            
+
+        });
+        
+        
+        test('a doctor can view only their own appointment', function () {
+
+             // Arrange
+             $roles = new RoleSeeder();
+             $roles->run();
+             $permissions = new PermissionSeed();
+             $permissions->run();
+ 
+             $user = User::factory()->create(['type' => 'doctor']);
+             $doctor = Doctor::factory()->create([
+                'user_id' => $user->id
+             ]);
+             $patient = Patient::factory()->create();
+ 
+             $appointmentDate = now()->startOfSecond();
+             $dataAppointment = [
+                 'doctor_id' => $doctor->id,
+                 'patient_id' => $patient->id,
+                 'appointment_date' => $appointmentDate,
+                 'status' => 'pending'
+             ];
+ 
+             $appointment = Appointment::factory()->create($dataAppointment);
+ 
+             // Act
+             $response = actingAs($user)
+             ->get(route('api.v1appointments.show', ['appointment' => $appointment->id]));
+
+            //  dd($response);
+
+             // Assert
+             $response->assertOk();
+             $response->assertStatus(200);
+             $response->assertJsonFragment($dataAppointment);
+             $response->assertJsonStructure(['doctor_id', 'patient_id', 'appointment_date', 'status']);
+
+
+        });
+
+
+        test('a receptionist can view a appointment', function () {
+
+            // Arrange
+            $roles = new RoleSeeder();
+            $roles->run();
+            $permissions = new PermissionSeed();
+            $permissions->run();
+
+            $user = User::factory()->create(['type' => 'receptionist']);
+            $doctor = Doctor::factory()->create();
+            $patient = Patient::factory()->create();
+
+            $appointmentDate = now()->startOfSecond();
+
+            $appointmentData = [
+                'doctor_id' => $doctor->id,
+                'patient_id' => $patient->id,
+                'appointment_date' => $appointmentDate,
+                'status' => 'pending'
+            ];
+
+            $appointment = Appointment::factory()->create($appointmentData);
+
+            //  Act
+            $response = actingAs($user)
+            ->get(route('api.v1appointments.show', ['appointment' => $appointment->id]));
+
+            // Assert
+            $response->assertOk();
+            $response->assertJsonStructure(['doctor_id', 'patient_id', 'appointment_date', 'status']);
+            $response->assertJsonFragment($appointmentData);
+        });
+
+
+        it('should not show appointment to a unauthenticated user', function () {
+
+             // Arrange
+ 
+             $user = User::factory()->create();
+             $doctor = Doctor::factory()->create();
+             $patient = Patient::factory()->create();
+ 
+             $appointmentDate = now()->startOfSecond();
+ 
+             $appointmentData = [
+                 'doctor_id' => $doctor->id,
+                 'patient_id' => $patient->id,
+                 'appointment_date' => $appointmentDate,
+                 'status' => 'pending'
+             ];
+ 
+             $appointment = Appointment::factory()->create($appointmentData);
+ 
+             //  Act
+             $response = get(route('api.v1appointments.show', ['appointment' => $appointment->id]));
+ 
+             // Assert
+            try {
+                $response->assertStatus(302);
+            } catch (AuthenticationException $e) {
+                expect($e)->toBeInstanceOf(AuthenticationException::class);
+            }
+
+        });
+        
+        it('should not show appointment to a user without permissions', function () {
+
+              // Arrange
+  
+              $user = User::factory()->create();
+              $doctor = Doctor::factory()->create();
+              $patient = Patient::factory()->create();
+  
+              $appointmentDate = now()->startOfSecond();
+  
+              $appointmentData = [
+                  'doctor_id' => $doctor->id,
+                  'patient_id' => $patient->id,
+                  'appointment_date' => $appointmentDate,
+                  'status' => 'pending'
+              ];
+  
+              $appointment = Appointment::factory()->create($appointmentData);
+  
+              //  Act
+              $response = actingAs($user)
+              ->get(route('api.v1appointments.show', ['appointment' => $appointment->id]));
+  
+              // Assert
+              $response->assertForbidden();
+
+        });
     });
 
 

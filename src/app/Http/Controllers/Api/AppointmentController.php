@@ -65,7 +65,9 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment, ShowAppointmentService $service): JsonResponse
     {
-        return response()->json($service->execute($appointment));
+        $user = auth()->user();
+
+        return response()->json($service->execute($appointment, $user));
     }
 
     /**
