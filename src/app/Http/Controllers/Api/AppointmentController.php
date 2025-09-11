@@ -56,7 +56,7 @@ class AppointmentController extends Controller
            status: $validated['status'],
         );
 
-        return response()->json($service->execute($data));
+        return response()->json($service->execute($data), 201);
 
     }
 

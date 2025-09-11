@@ -320,9 +320,85 @@ describe('Appointment Controller API', function () {
 
 
     describe('Create Appointment', function () {
-        it('should create a appointment', function () {})->todo();
-        it('should not create a appointment to a unauthenticated user', function () {})->todo();
-        it('should not create a appointment to a user without permissions', function () {})->todo();
+        it('should create a appointment', function () {
+
+            // Arrange
+            $roles = new RoleSeeder();
+            $roles->run();
+            $permissions = new PermissionSeed();
+            $permissions->run();
+
+            $user = User::factory()->create(['type' => 'admin']);
+            $doctor =  Doctor::factory()->create();
+            $patient = Patient::factory()->create();
+            $appointmentDate = now();
+            
+            // Act
+            $response = actingAs($user, 'sanctum')
+            ->postJson(route('api.v1appointments.store', [
+                'patient_id' => $patient->id,
+                'doctor_id' => $doctor->id,
+                'appointment_date' => $appointmentDate->format('Y-m-d H:i'), 
+                'status' => 'pending'
+            ]));
+
+            //Assert
+            $response->assertStatus(201);
+            $response->assertJsonStructure(['patient_id', 'doctor_id', 'appointment_date', 'status']);
+            $response->assertJsonFragment([
+                'patient_id' => (string) $patient->id,
+                'doctor_id' => (string) $doctor->id,
+                'appointment_date' => $appointmentDate->startOfMinute(), 
+                'status' => 'pending'
+            ]);
+
+        });
+
+        it('should not create a appointment to a unauthenticated user', function () {
+              // Arrange
+              $roles = new RoleSeeder();
+              $roles->run();
+              $permissions = new PermissionSeed();
+              $permissions->run();
+  
+              $user = User::factory()->create(['type' => 'admin']);
+              $doctor =  Doctor::factory()->create();
+              $patient = Patient::factory()->create();
+              $appointmentDate = now();
+              
+              // Act
+              $response = $this->actingAsGuest()
+              ->postJson(route('api.v1appointments.store', [
+                  'patient_id' => $patient->id,
+                  'doctor_id' => $doctor->id,
+                  'appointment_date' => $appointmentDate->format('Y-m-d H:i'), 
+                  'status' => 'pending'
+              ]));
+  
+              //Assert
+              $response->assertStatus(401);
+              
+        });
+        
+        it('should not create a appointment to a user without permissions', function () {
+             // Arrange
+             $user = User::factory()->create(['type' => 'admin']);
+             $doctor =  Doctor::factory()->create();
+             $patient = Patient::factory()->create();
+             $appointmentDate = now();
+             
+             // Act
+             $response = actingAs($user, 'sanctum')
+             ->postJson(route('api.v1appointments.store', [
+                 'patient_id' => $patient->id,
+                 'doctor_id' => $doctor->id,
+                 'appointment_date' => $appointmentDate->format('Y-m-d H:i'), 
+                 'status' => 'pending'
+             ]));
+ 
+             //Assert
+             $response->assertForbidden();
+        });
     });
 
     describe('Update Appointment', function () {
