@@ -28,7 +28,7 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 2.  Start the docker containers
     ```sh
-    docker-compose up -d --build
+    docker compose up -d --build
     ```
 3.  Setup your `.env` file
     ```sh
