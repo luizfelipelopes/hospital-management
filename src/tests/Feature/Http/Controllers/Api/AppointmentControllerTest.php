@@ -356,9 +356,6 @@ describe('Appointment Controller API', function () {
 
         it('should not create a appointment to a unauthenticated user', function () {
               // Arrange
-             
-  
-              $user = User::factory()->create(['type' => 'admin']);
               $doctor =  Doctor::factory()->create();
               $patient = Patient::factory()->create();
               $appointmentDate = now();
@@ -460,7 +457,7 @@ describe('Appointment Controller API', function () {
             // Assert
             $response->assertUnauthorized();
         });
-        
+
         it('should not update a appointment to a user without permissions', function () {
             // Arrange
             $user = User::factory()->create(['type' => 'admin']);
@@ -491,9 +488,51 @@ describe('Appointment Controller API', function () {
     });
 
     describe('Cancel Appointment', function () {
-        it('should cancel a appointment', function () {})->todo();
-        it('should not cancel a appointment to a unauthenticated user', function () {})->todo();
-        it('should not cancel a appointment to a user without permissions', function () {})->todo();
+        it('should cancel a appointment', function () {
+
+            // Arrange
+            $roles = new RoleSeeder();
+            $roles->run();
+            $permissions = new PermissionSeed();
+            $permissions->run();
+
+            $user = User::factory()->create(['type' => 'admin']);
+            $appointment = Appointment::factory()->create(['status' => 'pending']);
+
+            // Act
+            $response = actingAs($user)
+            ->deleteJson(route('api.v1appointments.destroy', ['appointment' => $appointment->id]));
+
+            // Assert
+            $response->assertOk();
+
+        });
+        
+        it('should not cancel a appointment to a unauthenticated user', function () {
+            // Arrange
+        
+            $user = User::factory()->create(['type' => 'admin']);
+            $appointment = Appointment::factory()->create(['status' => 'pending']);
+
+            // Act
+            $response = $this->actingAsGuest()
+            ->deleteJson(route('api.v1appointments.destroy', ['appointment' => $appointment->id]));
+
+            // Assert
+            $response->assertUnauthorized();
+        });
+        it('should not cancel a appointment to a user without permissions', function () {
+             // Arrange
+             $user = User::factory()->create(['type' => 'admin']);
+             $appointment = Appointment::factory()->create(['status' => 'pending']);
+ 
+             // Act
+             $response = actingAs($user)
+             ->deleteJson(route('api.v1appointments.destroy', ['appointment' => $appointment->id]));
+ 
+             // Assert
+             $response->assertForbidden();
+        });
     });
 
 });
