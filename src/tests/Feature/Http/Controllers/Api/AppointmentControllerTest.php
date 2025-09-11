@@ -356,10 +356,7 @@ describe('Appointment Controller API', function () {
 
         it('should not create a appointment to a unauthenticated user', function () {
               // Arrange
-              $roles = new RoleSeeder();
-              $roles->run();
-              $permissions = new PermissionSeed();
-              $permissions->run();
+             
   
               $user = User::factory()->create(['type' => 'admin']);
               $doctor =  Doctor::factory()->create();
@@ -402,9 +399,95 @@ describe('Appointment Controller API', function () {
     });
 
     describe('Update Appointment', function () {
-        it('should update a appointment', function () {})->todo();
-        it('should not update a appointment to a unauthenticated user', function () {})->todo();
-        it('should not update a appointment to a user without permissions', function () {})->todo();
+        it('should update a appointment', function () {
+
+            // Arrange
+            $roles = new RoleSeeder();
+            $roles->run();
+            $permissions = new PermissionSeed();
+            $permissions->run();
+            
+            $user = User::factory()->create(['type' => 'admin']);
+            $doctor = Doctor::factory()->create();
+            $patient = Patient::factory()->create();
+            $appointmentDate = now();
+
+            $appointment = Appointment::factory()->create([
+                    'doctor_id' => $doctor->id,
+                    'patient_id' => $patient->id,
+                    'appointment_date' => $appointmentDate,
+                    'status' => 'pending'
+                ]
+            );
+
+            // Act
+            $response = actingAs($user, 'sanctum')
+            ->putJson(route('api.v1appointments.update', $appointment->id), [
+                'doctor_id' => $doctor->id,
+                'patient_id' => $patient->id,
+                'appointment_date' => $appointmentDate,
+                'status' => 'confirmed'
+            ]);
+
+            // Assert
+            $response->assertOk();
+
+        });
+
+        it('should not update a appointment to a unauthenticated user', function () {
+            // Arrange
+            $doctor = Doctor::factory()->create();
+            $patient = Patient::factory()->create();
+            $appointmentDate = now();
+
+            $appointment = Appointment::factory()->create([
+                    'doctor_id' => $doctor->id,
+                    'patient_id' => $patient->id,
+                    'appointment_date' => $appointmentDate,
+                    'status' => 'pending'
+                ]
+            );
+
+            // Act
+            $response = $this->actingAsGuest()
+            ->putJson(route('api.v1appointments.update', $appointment->id), [
+                'doctor_id' => $doctor->id,
+                'patient_id' => $patient->id,
+                'appointment_date' => $appointmentDate,
+                'status' => 'confirmed'
+            ]);
+
+            // Assert
+            $response->assertUnauthorized();
+        });
+        
+        it('should not update a appointment to a user without permissions', function () {
+            // Arrange
+            $user = User::factory()->create(['type' => 'admin']);
+            $doctor = Doctor::factory()->create();
+            $patient = Patient::factory()->create();
+            $appointmentDate = now();
+
+            $appointment = Appointment::factory()->create([
+                    'doctor_id' => $doctor->id,
+                    'patient_id' => $patient->id,
+                    'appointment_date' => $appointmentDate,
+                    'status' => 'pending'
+                ]
+            );
+
+            // Act
+            $response = actingAs($user, 'sanctum')
+            ->putJson(route('api.v1appointments.update', $appointment->id), [
+                'doctor_id' => $doctor->id,
+                'patient_id' => $patient->id,
+                'appointment_date' => $appointmentDate,
+                'status' => 'confirmed'
+            ]);
+
+            // Assert
+            $response->assertForbidden();
+        });
     });
 
     describe('Cancel Appointment', function () {
