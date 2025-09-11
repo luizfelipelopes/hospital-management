@@ -24,7 +24,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  Clone the repo
     ```sh
-    git clone [https://github.com/luizfelipelopes/hospital-management.git](https://github.com/luizfelipelopes/hospital-management.git)
+    git clone https://github.com/luizfelipelopes/hospital-management.git
     ```
 2.  Start the docker containers
     ```sh
