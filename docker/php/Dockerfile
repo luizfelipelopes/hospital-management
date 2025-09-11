@@ -33,6 +33,37 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 # Instala o Composer (gerenciador de dependências do PHP)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# --- FIX 1: Add the git safe.directory configuration ---
+# This fixes the "dubious ownership" warning.
+RUN git config --global --add safe.directory /var/www/html
+
+# Copy only composer files and install dependencies
+COPY ./src/composer.json ./src/composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
+# --- FIX 2: Copy the application code BEFORE running commands that need it ---
+# Now copy the rest of your application code
+COPY src/ .
+
+# Copy the entrypoint script
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["entrypoint.sh"]
+
+# The default command to run after the entrypoint (from the base image)
+CMD ["php-fpm"]
+
+# Now that the 'artisan' file exists, generate the optimized autoload files
+# and run any other necessary post-install commands.
+RUN composer dump-autoload --optimize
+
+# Set permissions for storage and bootstrap/cache, which now exist
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Altera o dono do diretório para o usuário que o PHP-FPM usa
 RUN chown -R www-data:www-data /var/www/html
 
