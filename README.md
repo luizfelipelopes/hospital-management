@@ -34,6 +34,10 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```sh
     cp env.example src/.env
     ```
+4.  Install composer dependencies. Open a bash terminal to a hospital-manager container and type this command:
+    ```sh
+    composer install
+    ```
 4.  Update the Laravel config. Open a bash terminal to a hospital-manager container and type this command:
     ```sh
     php artisan optimize
