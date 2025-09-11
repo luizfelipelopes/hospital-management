@@ -1,4 +1,4 @@
-# Hospital Management Assesment
+# Hospital Management Assessment
 
 This is a project assessment about a implementation of Hospital Management System usin Laravel, REST API and Blade.
 
@@ -26,27 +26,15 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```sh
     git clone https://github.com/luizfelipelopes/hospital-management.git
     ```
-2.  Start the docker containers
-    ```sh
-    docker compose up -d --build
-    ```
-3.  Setup your `.env` file
+2.  Setup your `.env` file
     ```sh
     cp env.example src/.env
     ```
-4.  Install composer dependencies. Open a bash terminal to a hospital-manager container and type this command:
+3.  Start the docker containers
     ```sh
-    composer install
+    docker compose up -d --build
     ```
-4.  Update the Laravel config. Open a bash terminal to a hospital-manager container and type this command:
-    ```sh
-    php artisan optimize
-    ```
-5.  Run migrations and seed the database
-    ```sh
-    php artisan migrate --seed
-    ```
-6.  Open the application in [http://localhost:8001](http://localhost:8001)
+4.  Open the application in [http://localhost:8001](http://localhost:8001)
 
 ## Usage
 
