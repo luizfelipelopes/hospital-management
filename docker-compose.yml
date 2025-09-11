@@ -11,6 +11,8 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./src:/var/www/html # Mapeia a pasta 'src' local para dentro do contêiner
+      # Mapeia o arquivo de configuração do Xdebug para o diretório de configurações do PHP
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     networks:
       - laravel-network
 

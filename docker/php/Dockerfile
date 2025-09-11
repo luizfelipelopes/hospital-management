@@ -20,6 +20,10 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev
 
+# Instale o Xdebug
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
 # Limpa o cache do apt para manter a imagem pequena
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
