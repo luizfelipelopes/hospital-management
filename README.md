@@ -32,7 +32,7 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 3.  Setup your `.env` file
     ```sh
-    cp src/.env.example src/.env
+    cp env.example src/.env
     ```
 4.  Update the Laravel config. Open a bash terminal to a hospital-manager container and type this command:
     ```sh
