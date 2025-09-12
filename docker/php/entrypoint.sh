@@ -3,6 +3,10 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
+# Use wait-for-it to wait for the database to be ready
+# Replace 'db' with the name of your database service in docker-compose.yml
+wait-for-it.sh db
+
 # Run Laravel optimizations and migrations
 echo "Running Laravel setup commands..."
 php artisan config:cache

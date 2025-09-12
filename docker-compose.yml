@@ -11,6 +11,9 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./src:/var/www/html # Mapeia a pasta 'src' local para dentro do contêiner
+      # This line creates a Docker-managed volume for the vendor directory,
+      # protecting it from being overwritten by the host mount.
+      - /var/www/html/vendor
       # Mapeia o arquivo de configuração do Xdebug para o diretório de configurações do PHP
       - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     networks:

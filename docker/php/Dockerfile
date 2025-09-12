@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libonig-dev \
-    libzip-dev
+    libzip-dev \
+    netcat-openbsd
 
 # Instale o Xdebug
 RUN pecl install xdebug \
@@ -39,11 +40,15 @@ RUN git config --global --add safe.directory /var/www/html
 
 # Copy only composer files and install dependencies
 COPY ./src/composer.json ./src/composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
 
 # --- FIX 2: Copy the application code BEFORE running commands that need it ---
 # Now copy the rest of your application code
 COPY src/ .
+
+# (Add this near where you copy the entrypoint.sh)
+COPY docker/php/wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 # Copy the entrypoint script
 COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
