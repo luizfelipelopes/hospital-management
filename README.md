@@ -16,8 +16,6 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 ### Prerequisites
 
-* PHP >= 8.2
-* Composer
 * Docker
 
 ### Installation
@@ -40,6 +38,16 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 You can use via web application or API REST.
 
-You access the application using a default login .
-* **Admin Email**: `test@example.com`
-* **Password**: `password`
+You access the application using a default logins .
+
+* Admin User:
+    * **Email**: `admin@example.com`
+    * **Password**: `password`
+
+* Doctor User:
+    * **Email**: `doctor@example.com`
+    * **Password**: `password`
+
+* Receptionist User:
+    * **Email**: `receptionist@example.com`
+    * **Password**: `password`

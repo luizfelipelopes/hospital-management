@@ -23,9 +23,32 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
             'type' => 'admin'
+        ]);
+        
+        User::factory()->create([
+            'name' => 'Receptionist User',
+            'email' => 'receptionist@example.com',
+            'type' => 'receptionist'
+        ]);
+        
+        $doctorUser = User::factory()->create([
+            'name' => 'Doctor User',
+            'email' => 'doctor@example.com',
+            'type' => 'doctor'
+        ]);
+
+        $doctor = Doctor::factory()->create([
+            'user_id' => $doctorUser->id
+        ]);
+
+        $patient = Patient::factory()->create();
+
+        Appointment::factory(4)->create([
+            'doctor_id' => $doctor->id,
+            'patient_id' => $patient->id
         ]);
 
         Doctor::factory(10)->create();
