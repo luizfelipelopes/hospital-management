@@ -28,7 +28,7 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```
 2.  Setup your `.env` file
     ```sh
-    cp env.example src/.env
+    cp .env.example src/.env
     ```
 3.  Start the docker containers
     ```sh
