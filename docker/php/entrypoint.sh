@@ -9,9 +9,9 @@ wait-for-it.sh db
 
 # Run Laravel optimizations and migrations
 echo "Running Laravel setup commands..."
-php artisan migrate:rollback
 php artisan config:cache
 php artisan route:cache
+php artisan migrate:rollback
 php artisan migrate --force --seed
 
 echo "Setup complete. Starting PHP-FPM..."
