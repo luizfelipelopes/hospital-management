@@ -78,8 +78,10 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment, ShowAppointmentService $service): View
     {
+        $user = auth()->user();
+        
         return view('appointments.appointment', 
-        ['appointment' => $service->execute($appointment),
+        ['appointment' => $service->execute($appointment, $user),
                 'doctors' => Doctor::all(),
                 'patients' => Patient::all()        
                 ]);
