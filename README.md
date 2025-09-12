@@ -24,13 +24,9 @@ Follow these instructions to get a copy of the project up and running on your lo
     ```sh
     git clone https://github.com/luizfelipelopes/hospital-management.git
     ```
-2.  Setup your `.env` file
+3.  Start project
     ```sh
-    cp .env.example src/.env
-    ```
-3.  Start the docker containers
-    ```sh
-    docker compose up -d --build
+    make build
     ```
 4.  Open the application in [http://localhost:8001](http://localhost:8001)
 
