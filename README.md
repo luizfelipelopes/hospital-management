@@ -1,6 +1,6 @@
 # Hospital Management Assessment
 
-This is a project assessment about a implementation of Hospital Management System usin Laravel, REST API and Blade.
+This is a project assessment about a implementation of Hospital Management System using Laravel, REST API and Blade.
 
 ## About The Project
 
